@@ -62,10 +62,15 @@ app.use((err, req, res, next) => {
 });
 
 // ─── Start Server ────────────────────────────────────────────────
+const { startPolling } = require('./services/polling');
+
 app.listen(config.port, () => {
   console.log(`\n🚀 Server berjalan di http://localhost:${config.port}`);
   console.log(`   Environment: ${config.nodeEnv}`);
   console.log(`   Mode: SANDBOX (tidak ada transaksi real)\n`);
+  
+  // Mulai auto-polling transaksi pending
+  startPolling();
 });
 
 module.exports = app;
