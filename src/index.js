@@ -27,7 +27,10 @@ app.use((req, res, next) => {
 
 // ─── Routes ──────────────────────────────────────────────────────
 const profileRouter = require('./routes/profile');
+const transactionRouter = require('./routes/transaction');
+
 app.use('/api/profile', profileRouter);
+app.use('/transaction', transactionRouter);
 
 // Health check
 app.get('/', (req, res) => {
