@@ -1,0 +1,26 @@
+{
+  "name": "payment-sandbox",
+  "version": "1.0.0",
+  "description": "Proyek percobaan integrasi RonzzPay payment gateway (QRIS, e-wallet) menggunakan mode sandbox.",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "check-profile": "node scripts/check-profile.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "payment-gateway",
+    "ronzzpay",
+    "sandbox",
+    "qris"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "axios": "^1.19.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
