@@ -24,6 +24,9 @@ const config = {
     // Endpoint SANDBOX (wajib untuk create & status transaction)
     sandboxCreateUrl: 'https://pg.ronzzyt.id/sandbox/transaction/create',
     sandboxStatusUrl: 'https://pg.ronzzyt.id/sandbox/transaction/status',
+    // Endpoint withdraw (production)
+    withdrawCreateUrl: 'https://pg.ronzzyt.id/api/withdraw/create',
+    withdrawStatusUrl: 'https://pg.ronzzyt.id/api/withdraw/status',
   },
 };
 

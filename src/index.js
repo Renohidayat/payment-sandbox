@@ -8,15 +8,21 @@ const { config, validateConfig } = require('./config');
 // Validasi API Key sebelum apapun
 validateConfig();
 
+const transactionRouter = require('./routes/transaction');
+const webhookRouter = require('./routes/webhook');
+const withdrawRouter = require('./routes/withdraw');
+
 const app = express();
 
-const webhookRouter = require('./routes/webhook');
-
-// ─── Middleware Global ───────────────────────────────────────────
-// Webhook route dipasang SEBELUM express.json() agar bisa mendapatkan raw Buffer
+// ==========================================
+// 1. RAW BODY PARSER KHUSUS WEBHOOK
+// ==========================================
+// PENTING: Mount webhook sebelum express.json() agar body.raw tetap utuh
 app.use('/webhook', express.raw({ type: 'application/json' }), webhookRouter);
 
-// JSON body parser untuk semua route KECUALI webhook
+// ==========================================
+// 2. MIDDLEWARE UMUM
+// ==========================================
 app.use(express.json());
 
 // Request logger sederhana
@@ -31,10 +37,11 @@ app.use((req, res, next) => {
 
 // ─── Routes ──────────────────────────────────────────────────────
 const profileRouter = require('./routes/profile');
-const transactionRouter = require('./routes/transaction');
+
 
 app.use('/api/profile', profileRouter);
 app.use('/transaction', transactionRouter);
+app.use('/withdraw', withdrawRouter);
 
 // Health check
 app.get('/', (req, res) => {
