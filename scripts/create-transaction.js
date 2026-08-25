@@ -22,9 +22,11 @@ async function main() {
 
     console.log(`📡 Mengirim request create transaction (Rp ${amount})...\n`);
     
-    // Webhook di-skip dulu karena belum setup tunnel, 
-    // tapi nanti bisa diisi url tunnel.
-    const result = await createTransaction(code, amount, description);
+    // Menggunakan tunnel URL dari cloudflared
+    const webhookUrl = 'https://hull-caring-schedules-worcester.trycloudflare.com/webhook';
+    console.log(`🔗 Webhook URL: ${webhookUrl}\n`);
+
+    const result = await createTransaction(code, amount, description, webhookUrl);
 
     if (result.status) {
       console.log('✅ Transaksi berhasil dibuat!\n');
