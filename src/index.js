@@ -10,9 +10,13 @@ validateConfig();
 
 const app = express();
 
+const webhookRouter = require('./routes/webhook');
+
 // ─── Middleware Global ───────────────────────────────────────────
+// Webhook route dipasang SEBELUM express.json() agar bisa mendapatkan raw Buffer
+app.use('/webhook', express.raw({ type: 'application/json' }), webhookRouter);
+
 // JSON body parser untuk semua route KECUALI webhook
-// (webhook butuh raw body untuk HMAC verification — akan ditambahkan nanti)
 app.use(express.json());
 
 // Request logger sederhana
@@ -27,7 +31,10 @@ app.use((req, res, next) => {
 
 // ─── Routes ──────────────────────────────────────────────────────
 const profileRouter = require('./routes/profile');
+const transactionRouter = require('./routes/transaction');
+
 app.use('/api/profile', profileRouter);
+app.use('/transaction', transactionRouter);
 
 // Health check
 app.get('/', (req, res) => {
@@ -59,10 +66,15 @@ app.use((err, req, res, next) => {
 });
 
 // ─── Start Server ────────────────────────────────────────────────
+const { startPolling } = require('./services/polling');
+
 app.listen(config.port, () => {
   console.log(`\n🚀 Server berjalan di http://localhost:${config.port}`);
   console.log(`   Environment: ${config.nodeEnv}`);
   console.log(`   Mode: SANDBOX (tidak ada transaksi real)\n`);
+  
+  // Mulai auto-polling transaksi pending
+  startPolling();
 });
 
 module.exports = app;

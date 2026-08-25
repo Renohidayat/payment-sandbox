@@ -61,9 +61,27 @@ Gunakan URL tunnel sebagai `webhook_url` saat membuat transaksi.
 - **Framework**: Express.js
 - **HTTP Client**: Axios
 - **Environment**: dotenv
-- **QR Code**: qrcode (npm)
-- **Webhook Signature**: crypto (built-in HMAC-SHA256)
-- **Tunnel**: cloudflared
+-## 🧪 End-to-End Testing (Sandbox & Webhook)
+
+Karena ini menggunakan webhook, server lokal Anda harus bisa diakses dari internet agar RonzzPay bisa mengirimkan notifikasi. Anda bisa menggunakan [Cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-apps) (disarankan) atau [Ngrok](https://ngrok.com/).
+
+### Menggunakan Cloudflared
+1. Install cloudflared. (Di Windows: `winget install --id Cloudflare.cloudflared`).
+2. Jalankan server lokal:
+   ```bash
+   npm run dev
+   ```
+3. Buka terminal baru dan jalankan tunnel:
+   ```bash
+   cloudflared tunnel --url http://localhost:3000
+   ```
+4. Copy URL tunnel yang dihasilkan (contoh: `https://your-tunnel.trycloudflare.com`).
+5. Uji pembuatan transaksi dengan mengubah variabel `webhookUrl` di `scripts/create-transaction.js` menjadi `https://your-tunnel.trycloudflare.com/webhook`.
+6. Simulasikan pembayaran di dashboard Sandbox RonzzPay dan webhook akan masuk ke server lokal Anda.
+7. Anda juga bisa mensimulasikan webhook secara lokal tanpa tunnel menggunakan:
+   ```bash
+   node scripts/test-webhook.js <REFF_ID>
+   ```
 
 ## Keamanan
 
