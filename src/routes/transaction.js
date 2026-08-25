@@ -6,7 +6,7 @@
 const express = require('express');
 const router = express.Router();
 const QRCode = require('qrcode');
-const { createTransaction, getTransactionStatus } = require('../services/ronzzpay');
+const { createTransaction, getTransactionStatus, listTransactions } = require('../services/ronzzpay');
 const store = require('../store/transactions');
 
 /**
@@ -91,6 +91,43 @@ router.get('/status/:reffId', async (req, res) => {
       message: 'Detail status transaksi',
       data: transaction,
     });
+  } catch (error) {
+    const status = error.response?.status || 500;
+    const message = error.response?.data?.message || error.message;
+    res.status(status).json({
+      success: false,
+      message: `Error server: ${message}`,
+    });
+  }
+});
+
+/**
+ * GET /list
+ * Mengambil daftar riwayat transaksi dari API RonzzPay.
+ * Menerima query parameter: page, perPage, status
+ */
+router.get('/list', async (req, res) => {
+  try {
+    const { page, perPage, status } = req.query;
+    const options = {};
+    if (page) options.page = parseInt(page, 10);
+    if (perPage) options.perPage = parseInt(perPage, 10);
+    if (status) options.status = status;
+
+    const result = await listTransactions(options);
+
+    if (result.status) {
+      res.json({
+        success: true,
+        message: 'Berhasil mengambil daftar transaksi',
+        data: result.data,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message || 'Gagal mengambil daftar transaksi',
+      });
+    }
   } catch (error) {
     const status = error.response?.status || 500;
     const message = error.response?.data?.message || error.message;
