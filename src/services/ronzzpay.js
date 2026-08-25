@@ -110,9 +110,41 @@ async function listTransactions(options = {}) {
   return response.data;
 }
 
+/**
+ * Buat pencairan dana (Withdraw) ke rekening Bank / E-Wallet.
+ * Endpoint: POST /api/withdraw/create
+ */
+async function createWithdraw(amount, method, code, accountNumber, accountName) {
+  const payload = {
+    api_key: config.apiKey,
+    amount,
+    method,
+    code,
+    account_number: accountNumber,
+    account_name: accountName
+  };
+
+  const response = await apiClient.post(config.ronzzpay.withdrawCreateUrl, payload);
+  return response.data;
+}
+
+/**
+ * Cek status pencairan dana (Withdraw).
+ * Endpoint: POST /api/withdraw/status
+ */
+async function getWithdrawStatus(reffId) {
+  const response = await apiClient.post(config.ronzzpay.withdrawStatusUrl, {
+    api_key: config.apiKey,
+    reff_id: reffId,
+  });
+  return response.data;
+}
+
 module.exports = {
   getProfile,
   createTransaction,
   getTransactionStatus,
   listTransactions,
+  createWithdraw,
+  getWithdrawStatus
 };
