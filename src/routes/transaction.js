@@ -62,4 +62,43 @@ router.post('/create', async (req, res) => {
   }
 });
 
+/**
+ * GET /status/:reffId
+ * Cek status transaksi sandbox dari in-memory store, 
+ * jika perlu sinkronisasi dengan API RonzzPay.
+ */
+router.get('/status/:reffId', async (req, res) => {
+  try {
+    const { reffId } = req.params;
+    let transaction = store.get(reffId);
+
+    // Jika tidak ada di store, coba ambil dari API RonzzPay langsung
+    if (!transaction) {
+      const result = await getTransactionStatus(reffId);
+      if (result.status && result.data) {
+        store.save(reffId, result.data);
+        transaction = result.data;
+      } else {
+        return res.status(404).json({
+          success: false,
+          message: 'Transaksi tidak ditemukan',
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'Detail status transaksi',
+      data: transaction,
+    });
+  } catch (error) {
+    const status = error.response?.status || 500;
+    const message = error.response?.data?.message || error.message;
+    res.status(status).json({
+      success: false,
+      message: `Error server: ${message}`,
+    });
+  }
+});
+
 module.exports = router;
